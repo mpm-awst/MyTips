@@ -1,0 +1,43 @@
+■ Windows
+0. 作りたい環境
+・Windows TerminalからPowerShell経由で、パスフレーズ入力なしにLinuxサーバにssh接続する。
+・WindowsをXサーバとして用いる
+
+1. 必要環境のインストール
+(1) Xサーバ(VcXsrv)のインストール
+(2) Windows Terminalのインストール
+(3) PowerShell 7のインストール
+
+2. 環境設定
+(1) sshによる接続
+・Windows
+  - ユーザフォルダに.sshを作成する
+    C:\Userユーザ名\.ssh
+  - 鍵を作成する
+    PS C:XXXXXX> ssh-keygen.exe -t rsa
+  - 公開鍵(id_rsa.pub)を接続するサーバに送る
+  - サービスのssh 認証エージェントを有効にする
+    * Windowsメニュー → Windows管理ツール → サービス
+    * OpenSSH Authentication Agent を右クリックし、プロパティを選択
+    * スタートアップの種類を「自動」にする
+    * サービスの状態を「開始」にする
+  - ssh agentに秘密鍵を登録
+    * ssh-add.exe "C:\Users\XXXX\.ssh\id_rsa"
+・Linux
+  - ホームディレクトリ下に.sshを作成。
+    パーミッションは、600とする
+  - Windowsから送られた公開鍵を authorized_keys にコピーする(端末側からssh-addしてもよい)
+
+(2) Windows Terminalの設定
+・スタートアップコマンドファイルの作成
+  適当なフォルダに、以下を記載したXXXXX.ps1というファイルを作成する。
+  ---
+  $env:DISPLAY="localhost:0.0"
+  ssh -Y Linuxのユーザ名@接続先アドレス
+  ---
+・Windows Terminalの設定で捜査を以下のようにする
+  ---
+  "C:\Program Files\PowerShell\7\pwsh.exe" -File "XXXXX.ps1"
+  ---
+
+この後、適宜修正してゆく。今日は疲れたからここまで
